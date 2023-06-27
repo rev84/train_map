@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+  <div id="map"></div>
+  
+  <script>
+    var width = 500;
+    var height = 500;
+
+    // SVG要素の生成
+    var svg = d3.select("#map")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    // 駅データ
+    var stations = [
+      {name: "東京", roman: "Tokyo", x: 50, y: 450},
+      {name: "新宿", roman: "Shinjuku", x: 250, y: 250},
+      {name: "中野", roman: "Nakano", x: 450, y: 450}
+    ];
+
+    // 路線データ
+    var line = d3.line()
+                 .x(function(d) { return d.x; })
+                 .y(function(d) { return d.y; })
+                 .curve(d3.curveBundle.beta(1));  // 曲線の種類
+
+    // 路線の描画
+    svg.append("path")
+       .attr("d", line(stations))
+       .attr("stroke", "red")
+       .attr("stroke-width", 2)
+       .attr("fill", "none");
+
+    // 駅の描画
+    svg.selectAll("circle")
+       .data(stations)
+       .enter()
+       .append("circle")
+       .attr("cx", function(d) { return d.x; })
+       .attr("cy", function(d) { return d.y; })
+       .attr("r", 10)
+       .attr("stroke", "black")
+       .attr("stroke-width", 3)
+       .attr("fill", "white");
+
+    // 駅名の描画
+    svg.selectAll("text")
+       .data(stations)
+       .enter()
+       .append("text")
+       .attr("x", function(d) { return d.x + 20; })
+       .attr("y", function(d) { return d.y + 5; })
+       .text(function(d) { return d.name + " (" + d.roman + ")"; });
+  </script>
+</body>
+</html>
