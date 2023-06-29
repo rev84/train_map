@@ -1,0 +1,13 @@
+body {
+  margin-top: 60px;
+}
+
+.station {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+  font-family: 'M PLUS 1', sans-serif;
+  font-size: 20px;
+}

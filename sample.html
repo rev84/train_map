@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@600&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        .verticalText {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            display: flex;
+            align-items: flex-start;
+            height: 100%;
+            font-family: 'M PLUS 1', sans-serif;
+        }
+    </style>
 </head>
 <body>
-  <div id="map"></div>
-  
-  <script>
-    var width = 500;
-    var height = 500;
+<script>
 
-    // SVG要素の生成
-    var svg = d3.select("#map")
-                .append("svg")
-                .attr("width", width)
-                .attr("height", height);
-
-    // 駅データ
-    var stations = [
-      {name: "東京", roman: "Tokyo", x: 50, y: 450},
-      {name: "新宿", roman: "Shinjuku", x: 250, y: 250},
-      {name: "中野", roman: "Nakano", x: 450, y: 450}
+    var data = [
+        {name: "品川", x: 100, y: 300},
+        {name: "大崎", x: 150, y: 300},
+        {name: "五反田", x: 200, y: 300},
+        {name: "目黒", x: 250, y: 300},
+        // ...
+        // 実際の山手線の全ての駅のデータをここに記載します。
+        // ...
     ];
 
-    // 路線データ
-    var line = d3.line()
-                 .x(function(d) { return d.x; })
-                 .y(function(d) { return d.y; })
-                 .curve(d3.curveBundle.beta(1));  // 曲線の種類
+    var svg = d3.select("body").append("svg")
+        .attr("width", 800)
+        .attr("height", 600);
 
-    // 路線の描画
+    var circleRadius = 10;  // 2倍の大きさ
+    var circleStrokeWidth = circleRadius * 0.4;  // 丸の直径の10分の1
+    var lineWidth = circleRadius * 1.6;  // 丸の直径の0.8倍
+
+    var lineGenerator = d3.line()
+        .x(function(d) { return d.x; })
+        .y(function(d) { return d.y; });
+
+    var pathString = lineGenerator(data);
+
     svg.append("path")
-       .attr("d", line(stations))
-       .attr("stroke", "red")
-       .attr("stroke-width", 2)
-       .attr("fill", "none");
+        .attr('d', pathString)
+        .style("stroke", "#80c342")  // オレンジ色
+        .style("stroke-width", lineWidth)  // 太さを設定
+        .style("fill", "none");
 
-    // 駅の描画
     svg.selectAll("circle")
-       .data(stations)
-       .enter()
-       .append("circle")
-       .attr("cx", function(d) { return d.x; })
-       .attr("cy", function(d) { return d.y; })
-       .attr("r", 10)
-       .attr("stroke", "black")
-       .attr("stroke-width", 3)
-       .attr("fill", "white");
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; })
+        .attr("r", circleRadius)  // 大きさを設定
+        .style("fill", "white")
+        .style("stroke", "black")
+        .style("stroke-width", circleStrokeWidth);  // 丸の線の太さを設定
 
-    // 駅名の描画
-    svg.selectAll("text")
-       .data(stations)
-       .enter()
-       .append("text")
-       .attr("x", function(d) { return d.x + 20; })
-       .attr("y", function(d) { return d.y + 5; })
-       .text(function(d) { return d.name + " (" + d.roman + ")"; });
-  </script>
+    svg.selectAll("foreignObject")
+        .data(data)
+        .enter()
+        .append("foreignObject")
+        .attr("x", function(d) { return d.x - 15; })  // Adjust these values as needed
+        .attr("y", function(d) { return d.y + circleRadius + 5; })  // Adjust these values as needed
+        .attr("width", 30)
+        .attr("height", 100)
+        .append("xhtml:div")
+        .attr("class", "verticalText")
+        .text(function(d) { return d.name; })
+        .style("font-size", "20px");  // 1.5倍の大きさ
+
+</script>
 </body>
 </html>
